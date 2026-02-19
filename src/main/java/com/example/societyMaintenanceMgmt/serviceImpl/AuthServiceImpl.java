@@ -31,7 +31,7 @@ public class AuthServiceImpl implements iAuthService {
 //        User user = userRepository.findByEmail(request.getEmail())
 //                .orElseThrow(() -> new ResourceNotFoundException("User","Email", request.getEmail()));
 
-        User user = userRepository.findByEmail(request.getLoginId())
+        User user = userRepository.findByLoginId(request.getLoginId())
                 .orElseThrow(() -> new ResourceNotFoundException("User","Login Id", request.getLoginId()));
 
 
