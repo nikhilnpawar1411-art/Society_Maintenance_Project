@@ -2,6 +2,7 @@ package com.example.societyMaintenanceMgmt.controller;
 
 import com.example.societyMaintenanceMgmt.dto.LoginRequestDto;
 import com.example.societyMaintenanceMgmt.dto.LoginResponseDto;
+import com.example.societyMaintenanceMgmt.dto.SocietyRegistrationRequestDto;
 import com.example.societyMaintenanceMgmt.serviceImpl.AuthServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,8 +22,13 @@ public class AuthController {
     @   PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.login(request));
-//        LoginResponseDto loginResponseDto=authService.login(request);
-////        String token = authService.login(request);
-//        return ResponseEntity.ok(loginResponseDto);
+
     }
+
+    @PostMapping("/register-society")
+    public ResponseEntity<LoginResponseDto> register(
+            @RequestBody SocietyRegistrationRequestDto request) {
+        return ResponseEntity.status(HttpStatus.OK).body(authService.register(request));
+    }
+
 }

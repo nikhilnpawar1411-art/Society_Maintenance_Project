@@ -16,4 +16,5 @@ public class Society {
     private String societyName;
     private String societyAddress;
     private String societyRegistrationNumber;
+    private boolean isActive = true;
 }

@@ -18,8 +18,12 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     private String loginId;
-    private String name;
+    private String userName;
     private String email;
     private String password;
     private String role;
+
+//    @ManyToOne
+//    @JoinColumn(name = "society_id")
+//    private Society society;
 }
