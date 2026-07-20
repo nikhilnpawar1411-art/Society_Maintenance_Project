@@ -1,6 +1,7 @@
 package com.example.societyMaintenanceMgmt.utility;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,28 +30,47 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
-
-        if (authHeader != null && authHeader.startsWith("Bearer")) {
-            String token = authHeader.substring(7);
-            Claims claims = jwtUtil.extractClaims(token);
-
-            Long societyId = claims.get("societyId", Long.class);
-            String role = claims.get("role", String.class);
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            null,
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                    );
-            SocietyContext.setSocietyId(societyId);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-
         try {
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+
+                //Validate Token
+                if (jwtUtil.validateToken(token)) {
+                    Long userId = jwtUtil.extractUserId(token);
+                    Long societyId = jwtUtil.extractSocietyId(token);
+                    String role = jwtUtil.extractRole(token);
+
+// If you store loginId in the token later, extract it here.
+// For now, use null or add it to the JWT in a future enhancement.
+                    String loginId = null;
+
+                    LoggedInUser loggedInUser =
+                            new LoggedInUser(
+                                    userId,
+                                    societyId,
+                                    loginId,
+                                    role
+                            );
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    loggedInUser,
+                                    null,
+                                    List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                            );
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    response.setStatus((HttpServletResponse.SC_UNAUTHORIZED));
+                }
+            }
             filterChain.doFilter(request, response);
-        } finally {
-            SocietyContext.clear();
+        } catch (JwtException | IllegalArgumentException  ex){
+            response.setStatus((HttpServletResponse.SC_UNAUTHORIZED));
+
         }
+//        finally {
+//            SocietyContext.clear();
+//        }
     }
 }

@@ -11,17 +11,15 @@ import com.example.societyMaintenanceMgmt.repository.*;
 import com.example.societyMaintenanceMgmt.service.iAuthService;
 import com.example.societyMaintenanceMgmt.utility.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements iAuthService {
 
+//    private static final Logger log= LoggerFactory.getLogger((AuthServiceImpl.class));
     private final UserRepository userRepository;
     private final SocietyRepository societyRepository;
     private final PasswordEncoder passwordEncoder;
@@ -30,6 +28,7 @@ public class AuthServiceImpl implements iAuthService {
 
     @Override
     public LoginResponseDto login(LoginRequestDto request) {
+
 
 
 //        User user = userRepository.findByEmail(request.getEmail())
@@ -51,7 +50,7 @@ public class AuthServiceImpl implements iAuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
-        String token=jwtUtil.generateToken(user.getUserId(), user.getSocietyId(), user.getRole());
+        String token=jwtUtil.generateToken(user.getUserId(), user.getSocietyId(), user.getRole(),user.getLoginId());
 
         Society society = societyRepository.findBySocietyId(user.getSocietyId())
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -88,7 +87,7 @@ public class AuthServiceImpl implements iAuthService {
         society.setSocietyName(request.getSocietyName());
         society.setSocietyAddress(request.getSocietyAddress());
         society.setSocietyRegistrationNumber(request.getSocietyRegistrationNumber());
-        societyRepository.save(society);
+        society= societyRepository.save(society);
 
         // 2️⃣ Create Admin User
         User user = new User();
@@ -96,13 +95,13 @@ public class AuthServiceImpl implements iAuthService {
         user.setEmail(request.getEmail());
         user.setUserName(request.getUserName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("Admin");
+        user.setRole("ADMIN");
         user.setSocietyId(society.getSocietyId());
 
         userRepository.save(user);
 
         // 3️⃣ Generate Token
-        String token=jwtUtil.generateToken(user.getUserId(), user.getSocietyId(), user.getRole());
+        String token=jwtUtil.generateToken(user.getUserId(), user.getSocietyId(), user.getRole(), user.getLoginId());
 
         LoginResponseDto loginResponseDto=new LoginResponseDto();
         loginResponseDto.setToken(token);
