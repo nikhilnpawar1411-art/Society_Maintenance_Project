@@ -39,16 +39,15 @@ public class JwtFilter extends OncePerRequestFilter {
                     Long userId = jwtUtil.extractUserId(token);
                     Long societyId = jwtUtil.extractSocietyId(token);
                     String role = jwtUtil.extractRole(token);
-
-// If you store loginId in the token later, extract it here.
-// For now, use null or add it to the JWT in a future enhancement.
-                    String loginId = null;
+                    String loginId = jwtUtil.extractLoginId(token);
+                    String userName= jwtUtil.extractUserName(token);
 
                     LoggedInUser loggedInUser =
                             new LoggedInUser(
                                     userId,
                                     societyId,
                                     loginId,
+                                    userName,
                                     role
                             );
 
@@ -59,15 +58,18 @@ public class JwtFilter extends OncePerRequestFilter {
                                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
                             );
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    if(SecurityContextHolder.getContext().getAuthentication()==null){
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 } else {
                     response.setStatus((HttpServletResponse.SC_UNAUTHORIZED));
+                    return;
                 }
             }
             filterChain.doFilter(request, response);
         } catch (JwtException | IllegalArgumentException  ex){
             response.setStatus((HttpServletResponse.SC_UNAUTHORIZED));
-
+            return;
         }
 //        finally {
 //            SocietyContext.clear();

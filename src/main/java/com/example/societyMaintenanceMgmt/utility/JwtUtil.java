@@ -20,12 +20,13 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public String generateToken(Long userId, Long societyId, String role, String loginId) {
+    public String generateToken(Long userId, Long societyId, String role, String loginId,String userName) {
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .claim("societyId", societyId)
                 .claim("role", role)
                 .claim("loginId",loginId)
+                .claim("userName",userName)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
@@ -62,4 +63,11 @@ public class JwtUtil {
     public String extractRole(String token){
         return extractClaims(token).get("role", String.class);
     }
+    public String extractLoginId(String token){
+        return extractClaims(token).get("loginId", String.class);
+    }
+    public String extractUserName(String token){
+        return extractClaims(token).get("userName", String.class);
+    }
+
 }

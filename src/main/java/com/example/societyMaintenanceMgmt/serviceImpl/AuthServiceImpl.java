@@ -50,7 +50,7 @@ public class AuthServiceImpl implements iAuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
-        String token=jwtUtil.generateToken(user.getUserId(), user.getSocietyId(), user.getRole(),user.getLoginId());
+        String token=jwtUtil.generateToken(user.getUserId(), user.getSocietyId(), user.getRole(),user.getLoginId(),user.getUserName());
 
         Society society = societyRepository.findBySocietyId(user.getSocietyId())
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -101,7 +101,7 @@ public class AuthServiceImpl implements iAuthService {
         userRepository.save(user);
 
         // 3️⃣ Generate Token
-        String token=jwtUtil.generateToken(user.getUserId(), user.getSocietyId(), user.getRole(), user.getLoginId());
+        String token=jwtUtil.generateToken(user.getUserId(), user.getSocietyId(), user.getRole(), user.getLoginId(),user.getUserName());
 
         LoginResponseDto loginResponseDto=new LoginResponseDto();
         loginResponseDto.setToken(token);
