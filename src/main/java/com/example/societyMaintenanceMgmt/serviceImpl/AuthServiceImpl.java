@@ -8,7 +8,7 @@ import com.example.societyMaintenanceMgmt.entity.User;
 import com.example.societyMaintenanceMgmt.exception.AlreadyExistException;
 import com.example.societyMaintenanceMgmt.exception.ResourceNotFoundException;
 import com.example.societyMaintenanceMgmt.repository.*;
-import com.example.societyMaintenanceMgmt.service.iAuthService;
+import com.example.societyMaintenanceMgmt.service.IAuthService;
 import com.example.societyMaintenanceMgmt.utility.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements iAuthService {
+public class AuthServiceImpl implements IAuthService {
 
 //    private static final Logger log= LoggerFactory.getLogger((AuthServiceImpl.class));
     private final UserRepository userRepository;
@@ -73,13 +73,13 @@ public class AuthServiceImpl implements iAuthService {
     @Override
     public LoginResponseDto register(SocietyRegistrationRequestDto request) {
 
-        if (societyRepository.existsBySocietyName(request.getSocietyName())) {
+        if (societyRepository.existsBySocietyRegistrationNumber(request.getSocietyRegistrationNumber())){
             throw new AlreadyExistException("Society already exists");
 //            new ResourceNotFoundException("User","Login Id", request.getLoginId())
         }
 
         if (userRepository.existsByLoginId(request.getLoginId())) {
-            throw new AlreadyExistException("Email already registered");
+            throw new AlreadyExistException("LoginId already registered");
         }
 
         // 1️⃣ Create Society

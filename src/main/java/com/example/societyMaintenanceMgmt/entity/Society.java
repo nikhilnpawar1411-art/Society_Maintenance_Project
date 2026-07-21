@@ -3,6 +3,10 @@ package com.example.societyMaintenanceMgmt.entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="society")
@@ -17,4 +21,15 @@ public class Society {
     private String societyAddress;
     private String societyRegistrationNumber;
     private boolean isActive = true;
+    private Boolean hasWing;
+    private Boolean setupCompleted=false;
+    private String city;
+    private String state;
+    private String country;
+    private String pincode;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface SocietyRepository extends JpaRepository<Society, Long> {
     Optional<Society> findBySocietyId(Long id);
     boolean existsBySocietyName(String societyName);
+    boolean existsBySocietyRegistrationNumber(String societyRegistrationNumber);
 }
