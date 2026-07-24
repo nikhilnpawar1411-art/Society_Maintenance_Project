@@ -3,15 +3,21 @@ package com.example.societyMaintenanceMgmt.serviceImpl;
 import com.example.societyMaintenanceMgmt.dto.UserRequestDto;
 import com.example.societyMaintenanceMgmt.dto.UserResponseDto;
 import com.example.societyMaintenanceMgmt.entity.User;
+import com.example.societyMaintenanceMgmt.exception.AlreadyExistException;
+import com.example.societyMaintenanceMgmt.exception.ResourceNotFoundException;
 import com.example.societyMaintenanceMgmt.repository.UserRepository;
 import com.example.societyMaintenanceMgmt.service.IUserService;
 import com.example.societyMaintenanceMgmt.utility.LoggedInUser;
 import com.example.societyMaintenanceMgmt.utility.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
+@Transactional
 public class UserServiceImpl implements IUserService {
 
     @Autowired
@@ -24,13 +30,15 @@ public class UserServiceImpl implements IUserService {
 
         LoggedInUser currentUser = SecurityUtils.getCurrentUser();
 
-        if(userRepository.existsByLoginId(request.getLoginId())){
-            throw new RuntimeException("Login Id already exists");
+        if(userRepository.existsByLoginIdAndSocietyId(request.getLoginId(),currentUser.getSocietyId())){
+            throw new AlreadyExistException("Login Id already exists");
         }
 
-        if(userRepository.existsByEmail(request.getEmail())){
+        //Temporarily commented bcz society may have only 1 mail id
+       /* if(userRepository.existsByEmail(request.getEmail())){
             throw new RuntimeException("Email already exists");
         }
+        */
 
         User user = new User();
 
@@ -48,7 +56,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserResponseDto> getUsers() {
+    public List<UserResponseDto> getAllUsersFromSociety() {
 
         Long societyId = SecurityUtils.getCurrentUser().getSocietyId();
 
@@ -88,7 +96,7 @@ public class UserServiceImpl implements IUserService {
         if(!user.getSocietyId().equals(societyId)){
             throw new RuntimeException("Access denied");
         }
-
+        user.setLoginId(request.getLoginId());
         user.setUserName(request.getUserName());
         user.setEmail(request.getEmail());
         user.setRole(request.getRole());
@@ -109,7 +117,7 @@ public class UserServiceImpl implements IUserService {
 
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new ResourceNotFoundException("User","User id",""));
 
         if(!user.getSocietyId().equals(societyId)){
             throw new RuntimeException("Access denied");

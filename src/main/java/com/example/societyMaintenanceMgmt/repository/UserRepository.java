@@ -10,13 +10,15 @@ import java.util.*;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByLoginId(String loginId);
 
-    boolean existsByLoginId(String loginId);
+    boolean existsByLoginIdAndSocietyId(String loginId, Long societyId);
 
-    List<User> findBySocietyIdAndDeletedFalse(Long societyId);
+//    List<User> findBySocietyIdAndIsDeletedFalse(Long societyId);
 
     Optional<User> findByUserId(Long userId);
 
     List<User> findBySocietyIdAndIsActiveTrue(Long societyId);
 
-    boolean existsByEmail(String email);
+//    boolean existsByEmail(String email);
+
+    boolean existsByLoginId(String loginId);
 }

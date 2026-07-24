@@ -87,6 +87,11 @@ public class AuthServiceImpl implements IAuthService {
         society.setSocietyName(request.getSocietyName());
         society.setSocietyAddress(request.getSocietyAddress());
         society.setSocietyRegistrationNumber(request.getSocietyRegistrationNumber());
+        society.setHasWing(request.getHasWing());
+        society.setCity(request.getCity());
+        society.setState(request.getState());
+        society.setPincode(request.getPincode());
+        society.setCountry(request.getCountry());
         society= societyRepository.save(society);
 
         // 2️⃣ Create Admin User
@@ -97,6 +102,7 @@ public class AuthServiceImpl implements IAuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole("ADMIN");
         user.setSocietyId(society.getSocietyId());
+        user.setIsActive(true);
 
         userRepository.save(user);
 

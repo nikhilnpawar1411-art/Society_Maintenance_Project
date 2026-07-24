@@ -21,7 +21,7 @@ public class Society {
     private String societyAddress;
     private String societyRegistrationNumber;
     private boolean isActive = true;
-    private Boolean hasWing;
+    private Boolean hasWing=false;
     private Boolean setupCompleted=false;
     private String city;
     private String state;

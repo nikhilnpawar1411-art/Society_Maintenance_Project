@@ -5,6 +5,7 @@ import com.example.societyMaintenanceMgmt.dto.UserResponseDto;
 import com.example.societyMaintenanceMgmt.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,9 +26,9 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserResponseDto> getUsers(){
+    public List<UserResponseDto> getAllUsersFromSociety(){
 
-        return userService.getUsers();
+        return userService.getAllUsersFromSociety();
     }
 
     @GetMapping("/{id}")
@@ -46,9 +47,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(
+    public ResponseEntity<String> deleteUser(
             @PathVariable Long id){
 
         userService.deleteUser(id);
+        return ResponseEntity.ok("User deleted successfully.");
     }
 }
