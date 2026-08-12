@@ -20,7 +20,7 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public String   generateToken(Long userId, Long societyId, String role, String loginId,String userName) {
+    public String generateToken(Long userId, Long societyId, String role, String loginId,String userName) {
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .claim("societyId", societyId)
